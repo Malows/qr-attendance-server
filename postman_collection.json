@@ -1,0 +1,1548 @@
+{{
+
+  "info": {  "info": {
+
+    "name": "QR Attendance API - Complete",    "name": "QR Attendance API",
+
+    "description": "API REST completa para sistema de registro de asistencia con OAuth2 (Laravel Passport)\n\nIncluye:\n- Autenticación de Users (Administrators/Managers)\n- Autenticación de Employees\n- CRUD de Locations\n- CRUD de Employees\n- CRUD de Attendances\n- Gestión de Roles y Permisos",    "description": "API REST para sistema de registro de asistencia con OAuth2",
+
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+
+    "_postman_id": "qr-attendance-api-2025",  },
+
+    "version": "2.0.0"  "variable": [
+
+  },    {
+
+  "variable": [      "key": "base_url",
+
+    {      "value": "http://localhost:8080/api",
+
+      "key": "base_url",      "type": "string"
+
+      "value": "http://localhost:8080/api",    },
+
+      "type": "string"    {
+
+    },      "key": "token",
+
+    {      "value": "",
+
+      "key": "user_token",      "type": "string"
+
+      "value": "",    }
+
+      "type": "string",  ],
+
+      "description": "Token de autenticación para usuarios (administrators/managers/supervisors)"  "item": [
+
+    },    {
+
+    {      "name": "Auth",
+
+      "key": "user_refresh_token",      "item": [
+
+      "value": "",        {
+
+      "type": "string",          "name": "Register",
+
+      "description": "Refresh token para usuarios"          "request": {
+
+    },            "method": "POST",
+
+    {            "header": [
+
+      "key": "employee_token",              {
+
+      "value": "",                "key": "Content-Type",
+
+      "type": "string",                "value": "application/json"
+
+      "description": "Token de autenticación para empleados"              }
+
+    },            ],
+
+    {            "body": {
+
+      "key": "employee_refresh_token",              "mode": "raw",
+
+      "value": "",              "raw": "{\n  \"name\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"
+
+      "type": "string",            },
+
+      "description": "Refresh token para empleados"            "url": {
+
+    }              "raw": "{{base_url}}/register",
+
+  ],              "host": ["{{base_url}}"],
+
+  "item": [              "path": ["register"]
+
+    {            }
+
+      "name": "Users (Administrators/Managers)",          }
+
+      "description": "Endpoints para usuarios administradores y managers. Base URL: /api/users",        },
+
+      "item": [        {
+
+        {          "name": "Login",
+
+          "name": "Auth",          "request": {
+
+          "description": "Autenticación de usuarios (administrators, managers, supervisors)",            "method": "POST",
+
+          "item": [            "header": [
+
+            {              {
+
+              "name": "Register",                "key": "Content-Type",
+
+              "event": [                "value": "application/json"
+
+                {              }
+
+                  "listen": "test",            ],
+
+                  "script": {            "body": {
+
+                    "exec": [              "mode": "raw",
+
+                      "if (pm.response.code === 201) {",              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+
+                      "    var jsonData = pm.response.json();",            },
+
+                      "    pm.collectionVariables.set(\"user_token\", jsonData.access_token);",            "url": {
+
+                      "    pm.collectionVariables.set(\"user_refresh_token\", jsonData.refresh_token);",              "raw": "{{base_url}}/login",
+
+                      "}"              "host": ["{{base_url}}"],
+
+                    ],              "path": ["login"]
+
+                    "type": "text/javascript"            }
+
+                  }          }
+
+                }        },
+
+              ],        {
+
+              "request": {          "name": "Get User",
+
+                "method": "POST",          "request": {
+
+                "header": [            "method": "GET",
+
+                  {            "header": [
+
+                    "key": "Content-Type",              {
+
+                    "value": "application/json"                "key": "Authorization",
+
+                  },                "value": "Bearer {{token}}"
+
+                  {              }
+
+                    "key": "Accept",            ],
+
+                    "value": "application/json"            "url": {
+
+                  }              "raw": "{{base_url}}/user",
+
+                ],              "host": ["{{base_url}}"],
+
+                "body": {              "path": ["user"]
+
+                  "mode": "raw",            }
+
+                  "raw": "{\n  \"name\": \"Admin User\",\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}"          }
+
+                },        },
+
+                "url": {        {
+
+                  "raw": "{{base_url}}/users/auth/register",          "name": "Logout",
+
+                  "host": ["{{base_url}}"],          "request": {
+
+                  "path": ["users", "auth", "register"]            "method": "POST",
+
+                },            "header": [
+
+                "description": "Registrar un nuevo usuario. Se asigna automáticamente el rol 'supervisor'. Retorna user, access_token y refresh_token."              {
+
+              },                "key": "Authorization",
+
+              "response": []                "value": "Bearer {{token}}"
+
+            },              }
+
+            {            ],
+
+              "name": "Login",            "url": {
+
+              "event": [              "raw": "{{base_url}}/logout",
+
+                {              "host": ["{{base_url}}"],
+
+                  "listen": "test",              "path": ["logout"]
+
+                  "script": {            }
+
+                    "exec": [          }
+
+                      "if (pm.response.code === 200) {",        }
+
+                      "    var jsonData = pm.response.json();",      ]
+
+                      "    pm.collectionVariables.set(\"user_token\", jsonData.access_token);",    },
+
+                      "    pm.collectionVariables.set(\"user_refresh_token\", jsonData.refresh_token);",    {
+
+                      "}"      "name": "Locations",
+
+                    ],      "item": [
+
+                    "type": "text/javascript"        {
+
+                  }          "name": "List Locations",
+
+                }          "request": {
+
+              ],            "method": "GET",
+
+              "request": {            "header": [
+
+                "method": "POST",              {
+
+                "header": [                "key": "Authorization",
+
+                  {                "value": "Bearer {{token}}"
+
+                    "key": "Content-Type",              }
+
+                    "value": "application/json"            ],
+
+                  },            "url": {
+
+                  {              "raw": "{{base_url}}/locations",
+
+                    "key": "Accept",              "host": ["{{base_url}}"],
+
+                    "value": "application/json"              "path": ["locations"]
+
+                  }            }
+
+                ],          }
+
+                "body": {        },
+
+                  "mode": "raw",        {
+
+                  "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"password123\"\n}"          "name": "Create Location",
+
+                },          "request": {
+
+                "url": {            "method": "POST",
+
+                  "raw": "{{base_url}}/users/auth/login",            "header": [
+
+                  "host": ["{{base_url}}"],              {
+
+                  "path": ["users", "auth", "login"]                "key": "Authorization",
+
+                },                "value": "Bearer {{token}}"
+
+                "description": "Iniciar sesión con email y password. Retorna user, access_token y refresh_token."              },
+
+              },              {
+
+              "response": []                "key": "Content-Type",
+
+            },                "value": "application/json"
+
+            {              }
+
+              "name": "Get Profile (Me)",            ],
+
+              "request": {            "body": {
+
+                "method": "GET",              "mode": "raw",
+
+                "header": [              "raw": "{\n  \"name\": \"Oficina Central\",\n  \"address\": \"Av. Principal 123\",\n  \"city\": \"Lima\",\n  \"latitude\": -12.0464,\n  \"longitude\": -77.0428,\n  \"description\": \"Oficina principal\",\n  \"is_active\": true\n}"
+
+                  {            },
+
+                    "key": "Authorization",            "url": {
+
+                    "value": "Bearer {{user_token}}"              "raw": "{{base_url}}/locations",
+
+                  },              "host": ["{{base_url}}"],
+
+                  {              "path": ["locations"]
+
+                    "key": "Accept",            }
+
+                    "value": "application/json"          }
+
+                  }        },
+
+                ],        {
+
+                "url": {          "name": "Get Location",
+
+                  "raw": "{{base_url}}/users/auth/me",          "request": {
+
+                  "host": ["{{base_url}}"],            "method": "GET",
+
+                  "path": ["users", "auth", "me"]            "header": [
+
+                },              {
+
+                "description": "Obtener el perfil del usuario autenticado."                "key": "Authorization",
+
+              },                "value": "Bearer {{token}}"
+
+              "response": []              }
+
+            },            ],
+
+            {            "url": {
+
+              "name": "Refresh Token",              "raw": "{{base_url}}/locations/:id",
+
+              "event": [              "host": ["{{base_url}}"],
+
+                {              "path": ["locations", ":id"]
+
+                  "listen": "test",            }
+
+                  "script": {          }
+
+                    "exec": [        },
+
+                      "if (pm.response.code === 200) {",        {
+
+                      "    var jsonData = pm.response.json();",          "name": "Update Location",
+
+                      "    pm.collectionVariables.set(\"user_token\", jsonData.access_token);",          "request": {
+
+                      "    pm.collectionVariables.set(\"user_refresh_token\", jsonData.refresh_token);",            "method": "PUT",
+
+                      "}"            "header": [
+
+                    ],              {
+
+                    "type": "text/javascript"                "key": "Authorization",
+
+                  }                "value": "Bearer {{token}}"
+
+                }              },
+
+              ],              {
+
+              "request": {                "key": "Content-Type",
+
+                "method": "POST",                "value": "application/json"
+
+                "header": [              }
+
+                  {            ],
+
+                    "key": "Authorization",            "body": {
+
+                    "value": "Bearer {{user_token}}"              "mode": "raw",
+
+                  },              "raw": "{\n  \"name\": \"Oficina Central Actualizada\",\n  \"address\": \"Av. Principal 123\",\n  \"city\": \"Lima\",\n  \"latitude\": -12.0464,\n  \"longitude\": -77.0428,\n  \"description\": \"Oficina principal actualizada\",\n  \"is_active\": true\n}"
+
+                  {            },
+
+                    "key": "Content-Type",            "url": {
+
+                    "value": "application/json"              "raw": "{{base_url}}/locations/:id",
+
+                  },              "host": ["{{base_url}}"],
+
+                  {              "path": ["locations", ":id"]
+
+                    "key": "Accept",            }
+
+                    "value": "application/json"          }
+
+                  }        },
+
+                ],        {
+
+                "body": {          "name": "Delete Location",
+
+                  "mode": "raw",          "request": {
+
+                  "raw": "{\n  \"refresh_token\": \"{{user_refresh_token}}\"\n}"            "method": "DELETE",
+
+                },            "header": [
+
+                "url": {              {
+
+                  "raw": "{{base_url}}/users/auth/refresh",                "key": "Authorization",
+
+                  "host": ["{{base_url}}"],                "value": "Bearer {{token}}"
+
+                  "path": ["users", "auth", "refresh"]              }
+
+                },            ],
+
+                "description": "Renovar el access_token usando el refresh_token. Retorna nuevos access_token y refresh_token."            "url": {
+
+              },              "raw": "{{base_url}}/locations/:id",
+
+              "response": []              "host": ["{{base_url}}"],
+
+            },              "path": ["locations", ":id"]
+
+            {            }
+
+              "name": "Logout",          }
+
+              "request": {        }
+
+                "method": "POST",      ]
+
+                "header": [    },
+
+                  {    {
+
+                    "key": "Authorization",      "name": "Employees",
+
+                    "value": "Bearer {{user_token}}"      "item": [
+
+                  },        {
+
+                  {          "name": "List Employees",
+
+                    "key": "Accept",          "request": {
+
+                    "value": "application/json"            "method": "GET",
+
+                  }            "header": [
+
+                ],              {
+
+                "url": {                "key": "Authorization",
+
+                  "raw": "{{base_url}}/users/auth/logout",                "value": "Bearer {{token}}"
+
+                  "host": ["{{base_url}}"],              }
+
+                  "path": ["users", "auth", "logout"]            ],
+
+                },            "url": {
+
+                "description": "Cerrar sesión y revocar el token actual."              "raw": "{{base_url}}/employees",
+
+              },              "host": ["{{base_url}}"],
+
+              "response": []              "path": ["employees"]
+
+            }            }
+
+          ]          }
+
+        },        },
+
+        {        {
+
+          "name": "Locations",          "name": "Create Employee",
+
+          "description": "CRUD completo de locaciones",          "request": {
+
+          "item": [            "method": "POST",
+
+            {            "header": [
+
+              "name": "List Locations",              {
+
+              "request": {                "key": "Authorization",
+
+                "method": "GET",                "value": "Bearer {{token}}"
+
+                "header": [              },
+
+                  {              {
+
+                    "key": "Authorization",                "key": "Content-Type",
+
+                    "value": "Bearer {{user_token}}"                "value": "application/json"
+
+                  },              }
+
+                  {            ],
+
+                    "key": "Accept",            "body": {
+
+                    "value": "application/json"              "mode": "raw",
+
+                  }              "raw": "{\n  \"first_name\": \"Juan\",\n  \"last_name\": \"Perez\",\n  \"email\": \"juan.perez@company.com\",\n  \"phone\": \"+51999999999\",\n  \"employee_code\": \"EMP-001\",\n  \"hire_date\": \"2025-01-15\",\n  \"position\": \"Desarrollador\",\n  \"notes\": \"Empleado nuevo\",\n  \"is_active\": true\n}"
+
+                ],            },
+
+                "url": {            "url": {
+
+                  "raw": "{{base_url}}/users/locations",              "raw": "{{base_url}}/employees",
+
+                  "host": ["{{base_url}}"],              "host": ["{{base_url}}"],
+
+                  "path": ["users", "locations"]              "path": ["employees"]
+
+                },            }
+
+                "description": "Listar todas las locaciones del usuario."          }
+
+              },        },
+
+              "response": []        {
+
+            },          "name": "Get Employee",
+
+            {          "request": {
+
+              "name": "Create Location",            "method": "GET",
+
+              "request": {            "header": [
+
+                "method": "POST",              {
+
+                "header": [                "key": "Authorization",
+
+                  {                "value": "Bearer {{token}}"
+
+                    "key": "Authorization",              }
+
+                    "value": "Bearer {{user_token}}"            ],
+
+                  },            "url": {
+
+                  {              "raw": "{{base_url}}/employees/:id",
+
+                    "key": "Content-Type",              "host": ["{{base_url}}"],
+
+                    "value": "application/json"              "path": ["employees", ":id"]
+
+                  },            }
+
+                  {          }
+
+                    "key": "Accept",        },
+
+                    "value": "application/json"        {
+
+                  }          "name": "Update Employee",
+
+                ],          "request": {
+
+                "body": {            "method": "PUT",
+
+                  "mode": "raw",            "header": [
+
+                  "raw": "{\n  \"name\": \"Oficina Central\",\n  \"address\": \"Av. Principal 123\",\n  \"city\": \"Lima\",\n  \"latitude\": -12.0464,\n  \"longitude\": -77.0428,\n  \"description\": \"Oficina principal\",\n  \"is_active\": true\n}"              {
+
+                },                "key": "Authorization",
+
+                "url": {                "value": "Bearer {{token}}"
+
+                  "raw": "{{base_url}}/users/locations",              },
+
+                  "host": ["{{base_url}}"],              {
+
+                  "path": ["users", "locations"]                "key": "Content-Type",
+
+                },                "value": "application/json"
+
+                "description": "Crear una nueva locación."              }
+
+              },            ],
+
+              "response": []            "body": {
+
+            },              "mode": "raw",
+
+            {              "raw": "{\n  \"first_name\": \"Juan\",\n  \"last_name\": \"Perez Lopez\",\n  \"email\": \"juan.perez@company.com\",\n  \"phone\": \"+51999999999\",\n  \"employee_code\": \"EMP-001\",\n  \"hire_date\": \"2025-01-15\",\n  \"position\": \"Senior Developer\",\n  \"notes\": \"Empleado promovido\",\n  \"is_active\": true\n}"
+
+              "name": "Get Location",            },
+
+              "request": {            "url": {
+
+                "method": "GET",              "raw": "{{base_url}}/employees/:id",
+
+                "header": [              "host": ["{{base_url}}"],
+
+                  {              "path": ["employees", ":id"]
+
+                    "key": "Authorization",            }
+
+                    "value": "Bearer {{user_token}}"          }
+
+                  },        },
+
+                  {        {
+
+                    "key": "Accept",          "name": "Delete Employee",
+
+                    "value": "application/json"          "request": {
+
+                  }            "method": "DELETE",
+
+                ],            "header": [
+
+                "url": {              {
+
+                  "raw": "{{base_url}}/users/locations/1",                "key": "Authorization",
+
+                  "host": ["{{base_url}}"],                "value": "Bearer {{token}}"
+
+                  "path": ["users", "locations", "1"]              }
+
+                },            ],
+
+                "description": "Obtener detalles de una locación específica."            "url": {
+
+              },              "raw": "{{base_url}}/employees/:id",
+
+              "response": []              "host": ["{{base_url}}"],
+
+            },              "path": ["employees", ":id"]
+
+            {            }
+
+              "name": "Update Location",          }
+
+              "request": {        }
+
+                "method": "PUT",      ]
+
+                "header": [    },
+
+                  {    {
+
+                    "key": "Authorization",      "name": "Attendances",
+
+                    "value": "Bearer {{user_token}}"      "item": [
+
+                  },        {
+
+                  {          "name": "List Attendances",
+
+                    "key": "Content-Type",          "request": {
+
+                    "value": "application/json"            "method": "GET",
+
+                  },            "header": [
+
+                  {              {
+
+                    "key": "Accept",                "key": "Authorization",
+
+                    "value": "application/json"                "value": "Bearer {{token}}"
+
+                  }              }
+
+                ],            ],
+
+                "body": {            "url": {
+
+                  "mode": "raw",              "raw": "{{base_url}}/attendances",
+
+                  "raw": "{\n  \"name\": \"Oficina Central Actualizada\",\n  \"address\": \"Av. Principal 456\",\n  \"city\": \"Lima\",\n  \"latitude\": -12.0464,\n  \"longitude\": -77.0428,\n  \"description\": \"Oficina principal actualizada\",\n  \"is_active\": true\n}"              "host": ["{{base_url}}"],
+
+                },              "path": ["attendances"]
+
+                "url": {            }
+
+                  "raw": "{{base_url}}/users/locations/1",          }
+
+                  "host": ["{{base_url}}"],        },
+
+                  "path": ["users", "locations", "1"]        {
+
+                },          "name": "Check-in",
+
+                "description": "Actualizar una locación existente."          "request": {
+
+              },            "method": "POST",
+
+              "response": []            "header": [
+
+            },              {
+
+            {                "key": "Authorization",
+
+              "name": "Delete Location",                "value": "Bearer {{token}}"
+
+              "request": {              },
+
+                "method": "DELETE",              {
+
+                "header": [                "key": "Content-Type",
+
+                  {                "value": "application/json"
+
+                    "key": "Authorization",              }
+
+                    "value": "Bearer {{user_token}}"            ],
+
+                  },            "body": {
+
+                  {              "mode": "raw",
+
+                    "key": "Accept",              "raw": "{\n  \"employee_id\": 1,\n  \"location_id\": 1,\n  \"latitude\": -12.0464,\n  \"longitude\": -77.0428\n}"
+
+                    "value": "application/json"            },
+
+                  }            "url": {
+
+                ],              "raw": "{{base_url}}/attendances/check-in",
+
+                "url": {              "host": ["{{base_url}}"],
+
+                  "raw": "{{base_url}}/users/locations/1",              "path": ["attendances", "check-in"]
+
+                  "host": ["{{base_url}}"],            }
+
+                  "path": ["users", "locations", "1"]          }
+
+                },        },
+
+                "description": "Eliminar una locación (soft delete)."        {
+
+              },          "name": "Check-out",
+
+              "response": []          "request": {
+
+            }            "method": "POST",
+
+          ]            "header": [
+
+        },              {
+
+        {                "key": "Authorization",
+
+          "name": "Employees",                "value": "Bearer {{token}}"
+
+          "description": "CRUD completo de empleados",              },
+
+          "item": [              {
+
+            {                "key": "Content-Type",
+
+              "name": "List Employees",                "value": "application/json"
+
+              "request": {              }
+
+                "method": "GET",            ],
+
+                "header": [            "body": {
+
+                  {              "mode": "raw",
+
+                    "key": "Authorization",              "raw": "{\n  \"latitude\": -12.0464,\n  \"longitude\": -77.0428,\n  \"notes\": \"Día completado\"\n}"
+
+                    "value": "Bearer {{user_token}}"            },
+
+                  },            "url": {
+
+                  {              "raw": "{{base_url}}/attendances/:id/check-out",
+
+                    "key": "Accept",              "host": ["{{base_url}}"],
+
+                    "value": "application/json"              "path": ["attendances", ":id", "check-out"]
+
+                  }            }
+
+                ],          }
+
+                "url": {        },
+
+                  "raw": "{{base_url}}/users/employees",        {
+
+                  "host": ["{{base_url}}"],          "name": "Get Attendance",
+
+                  "path": ["users", "employees"]          "request": {
+
+                },            "method": "GET",
+
+                "description": "Listar todos los empleados del usuario."            "header": [
+
+              },              {
+
+              "response": []                "key": "Authorization",
+
+            },                "value": "Bearer {{token}}"
+
+            {              }
+
+              "name": "Create Employee",            ],
+
+              "request": {            "url": {
+
+                "method": "POST",              "raw": "{{base_url}}/attendances/:id",
+
+                "header": [              "host": ["{{base_url}}"],
+
+                  {              "path": ["attendances", ":id"]
+
+                    "key": "Authorization",            }
+
+                    "value": "Bearer {{user_token}}"          }
+
+                  },        }
+
+                  {      ]
+
+                    "key": "Content-Type",    }
+
+                    "value": "application/json"  ]
+
+                  },}
+
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"first_name\": \"Juan\",\n  \"last_name\": \"Perez\",\n  \"email\": \"juan.perez@company.com\",\n  \"phone\": \"+51999999999\",\n  \"employee_code\": \"EMP001\",\n  \"password\": \"password123\",\n  \"hire_date\": \"2025-01-15\",\n  \"position\": \"Desarrollador\",\n  \"notes\": \"Empleado nuevo\",\n  \"is_active\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/employees",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "employees"]
+                },
+                "description": "Crear un nuevo empleado."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Employee",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/employees/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "employees", "1"]
+                },
+                "description": "Obtener detalles de un empleado específico."
+              },
+              "response": []
+            },
+            {
+              "name": "Update Employee",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"first_name\": \"Juan\",\n  \"last_name\": \"Perez Lopez\",\n  \"email\": \"juan.perez@company.com\",\n  \"phone\": \"+51999999999\",\n  \"position\": \"Senior Developer\",\n  \"notes\": \"Empleado promovido\",\n  \"is_active\": true\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/employees/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "employees", "1"]
+                },
+                "description": "Actualizar un empleado existente."
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Employee",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/employees/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "employees", "1"]
+                },
+                "description": "Eliminar un empleado (soft delete)."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Attendances",
+          "description": "Gestión completa de asistencias por parte de administradores",
+          "item": [
+            {
+              "name": "List Attendances",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/attendances?employee_id=&location_id=&start_date=&end_date=",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "attendances"],
+                  "query": [
+                    {
+                      "key": "employee_id",
+                      "value": "",
+                      "description": "Filtrar por empleado"
+                    },
+                    {
+                      "key": "location_id",
+                      "value": "",
+                      "description": "Filtrar por locación"
+                    },
+                    {
+                      "key": "start_date",
+                      "value": "",
+                      "description": "Fecha inicio (YYYY-MM-DD)"
+                    },
+                    {
+                      "key": "end_date",
+                      "value": "",
+                      "description": "Fecha fin (YYYY-MM-DD)"
+                    }
+                  ]
+                },
+                "description": "Listar todas las asistencias con filtros opcionales."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Attendance",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"employee_id\": 1,\n  \"location_id\": 1,\n  \"check_in\": \"2025-10-16 08:00:00\",\n  \"check_in_latitude\": -12.0464,\n  \"check_in_longitude\": -77.0428,\n  \"notes\": \"Entrada manual por admin\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/attendances",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "attendances"]
+                },
+                "description": "Crear un registro de asistencia manualmente."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Attendance",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/attendances/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "attendances", "1"]
+                },
+                "description": "Obtener detalles de una asistencia específica."
+              },
+              "response": []
+            },
+            {
+              "name": "Update Attendance",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"check_in\": \"2025-10-16 08:00:00\",\n  \"check_out\": \"2025-10-16 17:00:00\",\n  \"check_out_latitude\": -12.0464,\n  \"check_out_longitude\": -77.0428,\n  \"notes\": \"Actualizado por admin\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/attendances/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "attendances", "1"]
+                },
+                "description": "Actualizar un registro de asistencia."
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Attendance",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/attendances/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "attendances", "1"]
+                },
+                "description": "Eliminar un registro de asistencia (soft delete)."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Roles & Permissions (Admin Only)",
+          "description": "Gestión de roles y permisos - solo administradores",
+          "item": [
+            {
+              "name": "List Roles",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/roles",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "roles"]
+                },
+                "description": "Listar todos los roles disponibles."
+              },
+              "response": []
+            },
+            {
+              "name": "List Permissions",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/users/permissions",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "permissions"]
+                },
+                "description": "Listar todos los permisos disponibles."
+              },
+              "response": []
+            },
+            {
+              "name": "Assign Role to User",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"role\": \"manager\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/manage/1/assign-role",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "manage", "1", "assign-role"]
+                },
+                "description": "Asignar un rol a un usuario."
+              },
+              "response": []
+            },
+            {
+              "name": "Remove Role from User",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"role\": \"manager\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/manage/1/remove-role",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "manage", "1", "remove-role"]
+                },
+                "description": "Remover un rol de un usuario."
+              },
+              "response": []
+            },
+            {
+              "name": "Give Permission to User",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"permission\": \"view-locations\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/manage/1/give-permission",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "manage", "1", "give-permission"]
+                },
+                "description": "Dar un permiso específico a un usuario."
+              },
+              "response": []
+            },
+            {
+              "name": "Revoke Permission from User",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{user_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"permission\": \"view-locations\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/users/manage/1/revoke-permission",
+                  "host": ["{{base_url}}"],
+                  "path": ["users", "manage", "1", "revoke-permission"]
+                },
+                "description": "Revocar un permiso específico de un usuario."
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Employees (Self-Service)",
+      "description": "Endpoints para empleados (apps móviles, kioscos, terminales). Base URL: /api/employees",
+      "item": [
+        {
+          "name": "Auth",
+          "description": "Autenticación de empleados",
+          "item": [
+            {
+              "name": "Login",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.collectionVariables.set(\"employee_token\", jsonData.access_token);",
+                      "    pm.collectionVariables.set(\"employee_refresh_token\", jsonData.refresh_token);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"username\": \"EMP001\",\n  \"password\": \"password123\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/employees/auth/login",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", "auth", "login"]
+                },
+                "description": "Iniciar sesión como empleado con email o employee_code. Retorna employee, access_token y refresh_token."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Profile (Me)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{employee_token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/auth/me",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", "auth", "me"]
+                },
+                "description": "Obtener el perfil del empleado autenticado."
+              },
+              "response": []
+            },
+            {
+              "name": "Refresh Token",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 200) {",
+                      "    var jsonData = pm.response.json();",
+                      "    pm.collectionVariables.set(\"employee_token\", jsonData.access_token);",
+                      "    pm.collectionVariables.set(\"employee_refresh_token\", jsonData.refresh_token);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{employee_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"refresh_token\": \"{{employee_refresh_token}}\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/employees/auth/refresh",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", "auth", "refresh"]
+                },
+                "description": "Renovar el access_token usando el refresh_token. Retorna nuevos access_token y refresh_token."
+              },
+              "response": []
+            },
+            {
+              "name": "Logout",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{employee_token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/auth/logout",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", "auth", "logout"]
+                },
+                "description": "Cerrar sesión y revocar el token actual."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Attendances",
+          "description": "Gestión de asistencias por parte de empleados (check-in/check-out)",
+          "item": [
+            {
+              "name": "List My Attendances",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{employee_token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/attendances?start_date=&end_date=&location_id=",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", "attendances"],
+                  "query": [
+                    {
+                      "key": "start_date",
+                      "value": "",
+                      "description": "Fecha inicio (YYYY-MM-DD)"
+                    },
+                    {
+                      "key": "end_date",
+                      "value": "",
+                      "description": "Fecha fin (YYYY-MM-DD)"
+                    },
+                    {
+                      "key": "location_id",
+                      "value": "",
+                      "description": "Filtrar por locación"
+                    }
+                  ]
+                },
+                "description": "Listar las asistencias propias del empleado."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Current Attendance",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{employee_token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/attendances/current",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", "attendances", "current"]
+                },
+                "description": "Obtener la asistencia actual abierta (sin check-out) si existe."
+              },
+              "response": []
+            },
+            {
+              "name": "Check-In",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{employee_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"location_id\": 1,\n  \"latitude\": -12.0464,\n  \"longitude\": -77.0428,\n  \"notes\": \"Entrada del día\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/employees/attendances/check-in",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", "attendances", "check-in"]
+                },
+                "description": "Registrar entrada (check-in). Requiere location_id, latitude y longitude. No se puede hacer check-in si ya hay uno abierto."
+              },
+              "response": []
+            },
+            {
+              "name": "Check-Out",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{employee_token}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"latitude\": -12.0464,\n  \"longitude\": -77.0428,\n  \"notes\": \"Salida del día\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/employees/attendances/check-out",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", "attendances", "check-out"]
+                },
+                "description": "Registrar salida (check-out). Requiere latitude y longitude. Debe existir un check-in abierto."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Locations",
+          "description": "Consultar locaciones disponibles",
+          "item": [
+            {
+              "name": "List Available Locations",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{employee_token}}"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/employees/locations",
+                  "host": ["{{base_url}}"],
+                  "path": ["employees", "locations"]
+                },
+                "description": "Listar todas las locaciones activas disponibles para check-in."
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
