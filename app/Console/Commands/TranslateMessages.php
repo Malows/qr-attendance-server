@@ -22,6 +22,20 @@ class TranslateMessages extends Command
     protected $description = 'Check and validate translation keys usage across the application';
 
     /**
+     * Path to controllers files.
+     * 
+     * @var string
+     */
+    private $controllersPath = 'Http/Controllers';
+
+    /**
+     * Path to requests files.
+     * 
+     * @var string
+     */
+    private $requestsPath = 'Http/Requests';
+
+    /**
      * Execute the console command.
      */
     public function handle()
@@ -77,7 +91,7 @@ class TranslateMessages extends Command
                     $missing[] = $key;
                 }
             }
-            
+
             if ($missing) {
                 $this->warn("❌ Missing keys in {$locale}:");
                 foreach ($missing as $key) {
@@ -94,8 +108,8 @@ class TranslateMessages extends Command
         $this->info('📊 Translation usage summary:');
         
         // Count hardcoded strings that could be translated
-        $requestFiles = glob(app_path('Http/Requests/**/*.php'));
-        $controllerFiles = glob(app_path('Http/Controllers/**/*.php'));
+        $requestFiles = glob(app_path("{$this->requestsPath}/**/*.php"));
+        $controllerFiles = glob(app_path("{$this->controllersPath}/**/*.php"));
         
         $hardcodedCount = 0;
         $translatedCount = 0;
@@ -123,8 +137,8 @@ class TranslateMessages extends Command
     private function getPhpFiles()
     {
         return array_merge(
-            glob(app_path('Http/Controllers/**/*.php')),
-            glob(app_path('Http/Requests/**/*.php')),
+            glob(app_path("{$this->controllersPath}/**/*.php")),
+            glob(app_path("{$this->requestsPath}/**/*.php")),
             glob(resource_path('views/**/*.php')),
         );
     }

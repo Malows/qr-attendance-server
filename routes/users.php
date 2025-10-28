@@ -1,10 +1,10 @@
 <?php
 
-use App\Http\Controllers\Api\Users\AttendanceController;
-use App\Http\Controllers\Api\Users\AuthController;
-use App\Http\Controllers\Api\Users\EmployeeController;
-use App\Http\Controllers\Api\Users\LocationController;
-use App\Http\Controllers\Api\Users\RoleController;
+use App\Http\Controllers\Users\AttendanceController;
+use App\Http\Controllers\Users\AuthController;
+use App\Http\Controllers\Users\EmployeeController;
+use App\Http\Controllers\Users\LocationController;
+use App\Http\Controllers\Users\RoleController;
 use Illuminate\Support\Facades\Route;
 
 /*

@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\Employees\AttendanceController;
-use App\Http\Controllers\Api\Employees\AuthController;
+use App\Http\Controllers\Employees\AttendanceController;
+use App\Http\Controllers\Employees\AuthController;
 use Illuminate\Support\Facades\Route;
 
 /*
